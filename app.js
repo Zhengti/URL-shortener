@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const Shortener = require('./models/shortener');
 app.use(bodyParser.urlencoded({ extended: true }))
 
+app.use(express.static('public'));
+
 require('./config/mongoose')
 
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
