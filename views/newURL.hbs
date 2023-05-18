@@ -1,10 +1,23 @@
 <form action="/">
   <p>Success! Please use the link:</p>
-  <a href="/yuncut/{{Shortener.randomURL}}">
+  <a id="copyNewURL" href="/yuncut/{{Shortener.randomURL}}">
     http://localhost:3000/yuncut/{{Shortener.randomURL }}
   </a>
 
   <div class="container">
-    <button type="button" class="btn btn-copy">Copy</button>
+    <button type="button" class="btn btn-copy" onclick="copy()">Copy</button>
+
+    <script>
+      async function copy() {
+        const copyURL = document.getElementById("copyNewURL").innerText;
+        try {
+          await navigator.clipboard.writeText(copyURL);
+          alert('網址已複製!');
+        } catch (error) {
+          console.error('複製失敗', error);
+        }
+      }
+    </script>
+
   </div>
 </form>
