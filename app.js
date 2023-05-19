@@ -56,9 +56,6 @@ app.get('/newURL-page', (req, res) => {
     .then(Shortener => {
       if (Shortener) {
         res.render('newURL', { Shortener });
-      } else {
-        // 縮網址不存在，顯示錯誤頁面
-        res.redirect('/error');
       }
     })
     .catch(error =>
@@ -75,7 +72,7 @@ app.get('/yuncut/:randomURL', (req, res) => {
         res.redirect(shortener.originalURL);
       } else {
         // 縮短網址不存在，顯示錯誤頁面
-        res.redirect('/error');
+        res.render('error');
       }
     })
     .catch(error => console.log(error))
