@@ -2,12 +2,12 @@ const express = require('express')
 const router = express.Router()
 const Shortener = require('../../models/shortener')
 
+// 首頁路由
 router.get('/', (req, res) => {
   res.render('index')
 })
 
-
-// 判斷是否已縮短過的網址
+// 判斷使用者輸入的網址的路由
 router.post('/shorteners', (req, res) => {
   const originalURL = req.body.inputURL;
   // 先檢查是否為有效網址
@@ -19,8 +19,8 @@ router.post('/shorteners', (req, res) => {
     Shortener.findOne({ originalURL: originalURL })
       .lean()
       .then(existingShortener => {
+        // 如果已存在相同的URL，直接回傳現有的縮網址資料
         if (existingShortener) {
-          // 如果已存在相同的URL，直接回傳現有的縮網址資料
           return res.render('newURL', { Shortener: existingShortener });
         } else {
           // 如果不存在相同的URL，則新增縮網址資料
@@ -28,6 +28,7 @@ router.post('/shorteners', (req, res) => {
           const newShortener = new Shortener({ originalURL, randomURL, })
           return newShortener.save()
             .then(createdShortener => {
+              // 這裡無法直接res.render('newURL', { createdShortener })會無法成功渲染縮網址，因此導向另一個路由來渲染頁面
               res.redirect(`/newURL-page?shortenerId=${createdShortener._id}`);
             })
             .catch(error => console.log(error));
@@ -37,7 +38,7 @@ router.post('/shorteners', (req, res) => {
   }
 });
 
-// 新建立的網址顯示的頁面路由，
+// 不存在相同的URL，在新增縮網址資料後渲染頁面的路由
 router.get('/newURL-page', (req, res) => {
   const shortenerId = req.query.shortenerId;
   // 根據縮網址的 ID 查詢縮網址資料
