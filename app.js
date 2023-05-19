@@ -20,24 +20,31 @@ app.get('/', (req, res) => {
 // 判斷是否已縮短過的網址
 app.post('/shorteners', (req, res) => {
   const originalURL = req.body.inputURL;
-  Shortener.findOne({ originalURL: originalURL })
-    .lean()
-    .then(existingShortener => {
-      if (existingShortener) {
-        // 如果已存在相同的URL，直接回傳現有的縮網址資料
-        return res.render('newURL', { Shortener: existingShortener });
-      } else {
-        // 如果不存在相同的URL，則新增縮網址資料
-        const randomURL = randomWords();
-        const newShortener = new Shortener({ originalURL, randomURL, })
-        return newShortener.save()
-          .then(createdShortener => {
-            res.redirect(`/newURL-page?shortenerId=${createdShortener._id}`);
-          })
-          .catch(error => console.log(error));
-      }
-    })
-    .catch(error => console.log(error));
+  // 先檢查是否為有效網址
+  if (!originalURL.includes('https://')) {
+    return res.render('error')
+
+    // 有效網址 - 繼續處理資料
+  } else {
+    Shortener.findOne({ originalURL: originalURL })
+      .lean()
+      .then(existingShortener => {
+        if (existingShortener) {
+          // 如果已存在相同的URL，直接回傳現有的縮網址資料
+          return res.render('newURL', { Shortener: existingShortener });
+        } else {
+          // 如果不存在相同的URL，則新增縮網址資料
+          const randomURL = randomWords();
+          const newShortener = new Shortener({ originalURL, randomURL, })
+          return newShortener.save()
+            .then(createdShortener => {
+              res.redirect(`/newURL-page?shortenerId=${createdShortener._id}`);
+            })
+            .catch(error => console.log(error));
+        }
+      })
+      .catch(error => console.log(error));
+  }
 });
 
 // 新建立的網址顯示的頁面路由，

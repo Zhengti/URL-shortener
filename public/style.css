@@ -60,3 +60,14 @@ p {
 a {
   text-decoration: none;
 }
+
+.back-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(14, 14, 230, 0.897);
+  background-color: white;
+  border: 1px solid rgba(14, 14, 230, 0.897);
+  width: 50%;
+  padding: 0.5rem;
+}
